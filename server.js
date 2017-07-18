@@ -8,6 +8,7 @@ const io = require('socket.io')(server);
 
 let users =[];
 let connections = [];
+let messages = [];
 
 
 io.sockets.on('connection',(socket) => {
@@ -22,12 +23,16 @@ io.sockets.on('connection',(socket) => {
         console.log("Connected: %s sockets connected", connections.length);
     });
 
-    socket.emit('message', { message: 'welcome to the chat' });
 
     //Message
 
     socket.on('send', (socket) => {
-        io.sockets.emit('message', socket);
+        if(messages.length >= 100){
+            messages.shift();
+        }
+        messages.push(socket);
+        io.sockets.emit('messageHistory', messages);
+
     });
 
     //New user
@@ -35,7 +40,7 @@ io.sockets.on('connection',(socket) => {
     socket.on('new user', (socket) => {
         users.push(socket);
         updateUsernames();
-        setTimeout(() => { changeStatus(socket) }, 3000);
+        setTimeout(() => { changeStatus(socket) }, 60000);
     });
 
     const updateUsernames = () => {
@@ -57,6 +62,12 @@ io.sockets.on('connection',(socket) => {
         updateUsernames();
 
     });
+
+    socket.on('user is typing', (data) => {
+        let index = users.indexOf(data.userNickName);
+        users.splice(index, 1, data);
+        io.sockets.emit('get users', users);
+    })
 });
 
 
