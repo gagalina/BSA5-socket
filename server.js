@@ -7,16 +7,25 @@ const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
 let users =[];
+let connections = [];
 
 
 io.sockets.on('connection',(socket) => {
-    console.log("new connection has been made");
+    connections.push(socket);
+    console.log("Connected: %s sockets connected", connections.length);
+
+    socket.on('disconnect', (data) => {
+        connections.splice(connections.indexOf(data), 1);
+        console.log("Connected: %s sockets connected", connections.length);
+    });
 
     socket.emit('message', { message: 'welcome to the chat' });
 
     socket.on('send', (data) => {
         io.sockets.emit('message', data);
     });
+
+
 
     socket.emit('getUser', {user: 'User'});
 

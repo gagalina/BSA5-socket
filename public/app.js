@@ -1,5 +1,4 @@
 (() => {
-    const content = document.querySelector('.content');
     const sendButton = document.querySelector('.sendButton');
     const field = document.querySelector('.field');
     const messageHistory = document.querySelector('.messageHistory');
@@ -7,6 +6,9 @@
     const nickName = document.getElementById('nickNameInput');
     const userBtn = document.querySelector('.userBtn');
     const nameFiled = document.querySelector('.nameFiled');
+    const modalWindow = document.getElementById('myModal');
+
+
     const socket = io('http://localhost:8080');
 
     let messages = [];
@@ -20,6 +22,7 @@
         socket.emit('authorization', user);
         name.value = '';
         nickName.value = '';
+        modalWindow.style.display = "none";
     };
     socket.on('getUser', (data) => {
         if(data.userNickName)
