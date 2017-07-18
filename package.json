@@ -1,0 +1,25 @@
+{
+  "name": "socket",
+  "version": "1.0.0",
+  "description": "Chat using sockets",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gagalina/BSA5-socket.git"
+  },
+  "author": "Lina Gaga",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gagalina/BSA5-socket/issues"
+  },
+  "homepage": "https://github.com/gagalina/BSA5-socket#readme",
+  "dependencies": {
+    "express": "^4.15.3",
+    "path": "^0.12.7",
+    "socket.io": "^2.0.3"
+  }
+}

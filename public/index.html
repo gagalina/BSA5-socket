@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Chat</title>
+</head>
+<body>
+<div class="content">
+    <label for="nameInput">Name</label>
+    <input type="text" id="nameInput">
+    <label for="nickNameInput">Nick</label>
+    <input type="text" id="nickNameInput">
+    <button class="userBtn">Log in</button>
+    <div class="nameFiled"></div>
+    <input type="text" class="field">
+    <button class="sendButton">Send</button>
+    <ul class="messageHistory"></ul>
+</div>
+
+<script src="../socket.io/socket.io.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
