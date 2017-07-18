@@ -14,28 +14,50 @@ io.sockets.on('connection',(socket) => {
     connections.push(socket);
     console.log("Connected: %s sockets connected", connections.length);
 
+    //Disconnect
+
     socket.on('disconnect', (data) => {
-        connections.splice(connections.indexOf(data), 1);
+        updateUsernames();
+        connections.splice(connections.indexOf(socket), 1);
         console.log("Connected: %s sockets connected", connections.length);
     });
 
     socket.emit('message', { message: 'welcome to the chat' });
 
-    socket.on('send', (data) => {
-        io.sockets.emit('message', data);
+    //Message
+
+    socket.on('send', (socket) => {
+        io.sockets.emit('message', socket);
     });
 
+    //New user
 
-
-    socket.emit('getUser', {user: 'User'});
-
-    socket.on('authorization', (data) => {
-        users.push(data);
-        io.sockets.emit('getUser', data);
+    socket.on('new user', (socket) => {
+        users.push(socket);
+        updateUsernames();
+        setTimeout(() => { changeStatus(socket) }, 3000);
     });
 
+    const updateUsernames = () => {
+        io.sockets.emit('get users', users);
+
+    };
+
+
+    const changeStatus = (user) => {
+        user.status = 'online';
+        io.sockets.emit('change to online', user);
+        updateUsernames();
+    };
+
+    socket.on('change to offline', (user) => {
+        user.status = 'offline';
+        let index = users.indexOf(user.userNickName);
+        users.splice(index, 1, user);
+        updateUsernames();
+
+    });
 });
-
 
 
 let port = 8080;

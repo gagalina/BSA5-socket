@@ -1,3 +1,6 @@
+.container{
+    margin-top: 10px;
+}
 .modalWindow {
     display: block;
     position: fixed;
