@@ -49,8 +49,15 @@
     sendButton.onclick = (e) => {
         e.preventDefault();
         let text = field.value;
+        let receiver = checkForReceiver(text);
+        console.log(receiver);
+        if(receiver !== undefined){
+            socket.emit('send to specific client', receiver)
+        }
         socket.emit('send', {message: text, sender:user});
         field.value = '';
+
+
     };
 
     //List of items
@@ -86,6 +93,7 @@
             let text = field.value;
             socket.emit('send', {message: text, sender:user});
             field.value =''
+
         }
         else{
             socket.emit('is typing', user);
@@ -101,6 +109,19 @@
         }
     });
 
+    const checkForReceiver = (item) => {
+        let splittedMessage = item.split(" ");
+        let receiver = splittedMessage.filter((item) => {
+            if (item.startsWith("@")){
+                console.log(item);
+                let res = item.substring(0,1);
+                console.log(res);
+                return res;
+            };
+        });
+
+        return receiver;
+    };
 
 
 

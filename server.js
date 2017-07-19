@@ -12,6 +12,11 @@ let messages = [];
 
 
 io.sockets.on('connection',(socket) => {
+
+    let newUser ={
+        socket_id: socket.id
+    };
+
     connections.push(socket);
     console.log("Connected: %s sockets connected", connections.length);
 
@@ -38,7 +43,8 @@ io.sockets.on('connection',(socket) => {
     //New user
 
     socket.on('new user', (socket) => {
-        users.push(socket);
+        let user = Object.assign({}, socket, newUser);
+        users.push(user);
         updateUsernames();
         setTimeout(() => { changeStatus(socket) }, 60000);
     });
@@ -67,6 +73,19 @@ io.sockets.on('connection',(socket) => {
     socket.on('is typing', (data) => {
         socket.broadcast.emit('typing', {nickname: data.userNickName});
     });
+
+    //Send to specific client
+    socket.on('send to specific client', (user) => {
+        let receiver_id;
+        users.map((item) => {
+            if(item === user.userNickName){
+                receiver_id = item.socket_id;
+                console.log(user.nickname);
+                socket.broadcast.to(receiver_id).emit('send', 'for your eyes only');
+            }
+        })
+    })
+
 
 });
 
