@@ -16,33 +16,35 @@
 
     let user = {};
 
+    //Log in
+
     userBtn.onclick = () => {
         user = {
             userName:name.value,
             userNickName:nickName.value,
             status:"just appeared",
-            isTyping: false
         };
+
         socket.emit('new user', user);
         name.value = '';
         nickName.value = '';
         modalWindow.style.display = "none";
     };
 
+    //View message history
 
     socket.on('messageHistory', (data) => {
+            userIsTyping.innerText = '';
             messageHistory.innerText = '';
-            messageHistory.innerHTML='';
             data.map((el) => {
                 let itemMessage = document.createElement("div");
-                if (checkForReceiver(el.message) === true){
-                    itemMessage.classList.add("special");
-                }
                 itemMessage.classList.add('well');
                 itemMessage.innerText = el.sender.userNickName +" - "+ el.message;
                 messageHistory.appendChild(itemMessage);
             });
     });
+
+    //Send message with button
 
     sendButton.onclick = (e) => {
         e.preventDefault();
@@ -50,6 +52,8 @@
         socket.emit('send', {message: text, sender:user});
         field.value = '';
     };
+
+    //List of items
 
     socket.on('get users', (data) => {
         users.innerText = '';
@@ -61,33 +65,43 @@
         });
     });
 
+    //Change to online status
+
     socket.on('change to online', (data) => {
         console.log(data.status);
     });
+
+    //Change to offline
 
     window.onbeforeunload = () => {
         socket.emit('change to offline', user);
 
     };
 
+    //While typing
 
-    // field.addEventListener('focus', () => {
-    //     let typing = Object.assign({}, user, {isTyping:true});
-    //     socket.emit('user is typing', typing);
-    // });
-    //
-    // field.addEventListener('blur', () => {
-    //     let typing = Object.assign({}, user, {isTyping:false});
-    //     socket.emit('user is typing', typing);
-    //
-    // });
+    field.addEventListener('keyup', (e) => {
 
-    const checkForReceiver = (item) => {
-        let splittedMessage = item.split(" ");
-        let receiver = splittedMessage.filter((item) => {
-            return item.startsWith("@");
-        });
-        return !!receiver.length>0;
-    };
+        if (e.keyCode === 13)  {
+            let text = field.value;
+            socket.emit('send', {message: text, sender:user});
+            field.value =''
+        }
+        else{
+            socket.emit('is typing', user);
+        }
+    });
+
+    socket.on('typing', (data) => {
+        userIsTyping.innerHTML = '';
+        if (data) {
+            userIsTyping.innerHTML = data.nickname + ' is typing...';
+        } else {
+            userIsTyping.innerHTML = '';
+        }
+    });
+
+
+
 
 })();

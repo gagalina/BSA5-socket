@@ -48,6 +48,7 @@ io.sockets.on('connection',(socket) => {
 
     };
 
+    //Change status
 
     const changeStatus = (user) => {
         user.status = 'online';
@@ -63,11 +64,10 @@ io.sockets.on('connection',(socket) => {
 
     });
 
-    socket.on('user is typing', (data) => {
-        let index = users.indexOf(data.userNickName);
-        users.splice(index, 1, data);
-        io.sockets.emit('get users', users);
-    })
+    socket.on('is typing', (data) => {
+        socket.broadcast.emit('typing', {nickname: data.userNickName});
+    });
+
 });
 
 
