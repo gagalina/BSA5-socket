@@ -75,18 +75,16 @@ io.sockets.on('connection',(socket) => {
     });
 
     //Send to specific client
-    socket.on('send to specific client', (user) => {
-        let receiver_id;
+    socket.on('send to specific client', (data) => {
+        let receiver_id = '';
         users.map((item) => {
-            if(item === user.userNickName){
+            if(item.userNickName === data.receiver){
                 receiver_id = item.socket_id;
-                console.log(user.nickname);
-                socket.broadcast.to(receiver_id).emit('send', 'for your eyes only');
+                io.sockets.connected[receiver_id].emit('messageHistory', [data.message]);
+                //socket.broadcast.to(receiver_id).emit('send', 'for your eyes only');
             }
         })
-    })
-
-
+    });
 });
 
 

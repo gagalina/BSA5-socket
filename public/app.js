@@ -19,21 +19,24 @@
     //Log in
 
     userBtn.onclick = () => {
-        user = {
-            userName:name.value,
-            userNickName:nickName.value,
-            status:"just appeared",
-        };
+            user = {
+                userName:name.value,
+                userNickName:nickName.value,
+                status:"just appeared",
+            };
 
-        socket.emit('new user', user);
-        name.value = '';
-        nickName.value = '';
-        modalWindow.style.display = "none";
+            socket.emit('new user', user);
+            name.value = '';
+            nickName.value = '';
+            modalWindow.style.display = "none";
+
     };
+//if(validateForm(userName) && validateForm(userNickName)){}
 
     //View message history
 
     socket.on('messageHistory', (data) => {
+        console.log(data);
             userIsTyping.innerText = '';
             messageHistory.innerText = '';
             data.map((el) => {
@@ -50,13 +53,11 @@
         e.preventDefault();
         let text = field.value;
         let receiver = checkForReceiver(text);
-        console.log(receiver);
         if(receiver !== undefined){
-            socket.emit('send to specific client', receiver)
+            socket.emit('send to specific client', {receiver: receiver, message:text})
         }
         socket.emit('send', {message: text, sender:user});
         field.value = '';
-
 
     };
 
@@ -109,20 +110,26 @@
         }
     });
 
+    //check for the receiver
+
     const checkForReceiver = (item) => {
         let splittedMessage = item.split(" ");
-        let receiver = splittedMessage.filter((item) => {
+        let res = '';
+        splittedMessage.map((item) => {
             if (item.startsWith("@")){
-                console.log(item);
-                let res = item.substring(0,1);
-                console.log(res);
-                return res;
-            };
+                res = item.substring(1, item.length);
+            }
         });
-
-        return receiver;
+        return res;
     };
 
+
+    // validate form
+    const validateForm = (field) => {
+        if (field.value === "") {
+            return false;
+        }
+    }
 
 
 })();
