@@ -35,6 +35,9 @@
             messageHistory.innerHTML='';
             data.map((el) => {
                 let itemMessage = document.createElement("div");
+                if (checkForReceiver(el.message) === true){
+                    itemMessage.classList.add("special");
+                }
                 itemMessage.classList.add('well');
                 itemMessage.innerText = el.sender.userNickName +" - "+ el.message;
                 messageHistory.appendChild(itemMessage);
@@ -50,18 +53,7 @@
 
     socket.on('get users', (data) => {
         users.innerText = '';
-        let typingUsers = [];
         data.map((el) => {
-            console.log(el);
-            if (el.isTyping){
-                typingUsers.push(el.userNickName);
-            }
-            if(typingUsers.length !== 0){
-                userIsTyping.innerText = typingUsers.join(',') + ' is typing...';
-                while (typingUsers.length) {
-                    typingUsers.pop();
-                }
-            }
             let itemMessage = document.createElement("li");
             itemMessage.classList.add('list-group-item');
             itemMessage.innerText = el.userName +" "+ el.userNickName +" " + el.status;
@@ -79,35 +71,23 @@
     };
 
 
-    field.addEventListener('focus', () => {
-        let typing = Object.assign({}, user, {isTyping:true});
-        socket.emit('user is typing', typing);
-    });
+    // field.addEventListener('focus', () => {
+    //     let typing = Object.assign({}, user, {isTyping:true});
+    //     socket.emit('user is typing', typing);
+    // });
+    //
+    // field.addEventListener('blur', () => {
+    //     let typing = Object.assign({}, user, {isTyping:false});
+    //     socket.emit('user is typing', typing);
+    //
+    // });
 
-    field.addEventListener('blur', () => {
-        let typing = Object.assign({}, user, {isTyping:false});
-        socket.emit('user is typing', typing);
-
-    });
-
-    const renderUsers = () => {
-        if (users.length !== 0) {
-            userIsTyping.innerText = '';
-            let typingUsers = [];
-            users.map((el) => {
-                if (el.isTyping === "true"){
-                    typingUsers.push(el.user);
-                }
-            });
-            if(typingUsers.length !== 0){
-                //let index = typingUsers.indexOf(userName.innerText);
-                //typingUsers.splice(index,1);
-                userIsTyping.innerText = typingUsers.join(',') + ' is typing...';
-                while (typingUsers.length) {
-                    typingUsers.pop();
-                }
-            }
-        }
+    const checkForReceiver = (item) => {
+        let splittedMessage = item.split(" ");
+        let receiver = splittedMessage.filter((item) => {
+            return item.startsWith("@");
+        });
+        return !!receiver.length>0;
     };
 
 })();
