@@ -36,7 +36,7 @@
     //View message history
 
     socket.on('messageHistory', (data) => {
-        console.log(data);
+        console.log('messageHistory: ', data);
             userIsTyping.innerText = '';
             messageHistory.innerText = '';
             data.map((el) => {
@@ -55,6 +55,8 @@
         let receiver = checkForReceiver(text);
         if(receiver !== undefined){
             socket.emit('send to specific client', {receiver: receiver, message:text})
+            field.value = '';
+            return;
         }
         socket.emit('send', {message: text, sender:user});
         field.value = '';
@@ -76,7 +78,7 @@
     //Change to online status
 
     socket.on('change to online', (data) => {
-        console.log(data.status);
+        console.log('change to online: ', data.status);
     });
 
     //Change to offline

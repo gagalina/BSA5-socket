@@ -79,8 +79,16 @@ io.sockets.on('connection',(socket) => {
         let receiver_id = '';
         users.map((item) => {
             if(item.userNickName === data.receiver){
+                if(!item.socket_id) {
+                    console.log('\n\nitem', item);
+                    console.log('\n\nusers', users);
+                }
                 receiver_id = item.socket_id;
-                io.sockets.connected[receiver_id].emit('messageHistory', [data.message]);
+                console.log('receiver_id: ', receiver_id);
+                console.log('data', data);
+                io.sockets.connected[receiver_id].emit('messageHistory', [{
+                    sender: item, message: data.message
+                }]);
                 //socket.broadcast.to(receiver_id).emit('send', 'for your eyes only');
             }
         })
