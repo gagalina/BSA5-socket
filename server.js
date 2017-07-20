@@ -44,9 +44,29 @@ io.sockets.on('connection',(socket) => {
 
     socket.on('new user', (socket) => {
         let user = Object.assign({}, socket, newUser);
-        users.push(user);
-        updateUsernames();
-        setTimeout(() => { changeStatus(socket) }, 60000);
+
+        if(users.length !== 0){
+            let wrongUsers =users.filter((item) => {
+                return item.userNickName === user.userNickName;
+            });
+            if(wrongUsers.length === 0){
+                io.sockets.emit('validation', true);
+                users.push(user);
+                updateUsernames();
+                setTimeout(() => { changeStatus(socket) }, 60000);
+
+            }else{
+                io.sockets.emit('validation', false)
+
+            }
+        }else{
+            io.sockets.emit('validation', true);
+            users.push(user);
+            updateUsernames();
+            setTimeout(() => { changeStatus(socket) }, 60000);
+
+        }
+
     });
 
     const updateUsernames = () => {

@@ -7,6 +7,7 @@
     const userBtn = document.querySelector('.userBtn');
     const nameFiled = document.querySelector('.nameFiled');
     const userIsTyping = document.querySelector('.userIsTyping');
+    const validationField = document.querySelector('.validationField');
     const modalWindow = document.getElementById('myModal');
     const users = document.getElementById('users');
 
@@ -24,11 +25,18 @@
                 userNickName:nickName.value,
                 status:"just appeared",
             };
-
             socket.emit('new user', user);
-            name.value = '';
-            nickName.value = '';
-            modalWindow.style.display = "none";
+            socket.on('validation', (data) => {
+                if(data === true){
+                    name.value = '';
+                    nickName.value = '';
+                    modalWindow.style.display = "none";
+                } else{
+
+                    validationField.innerText = 'Wrong input';
+                }
+            });
+
 
     };
 //if(validateForm(userName) && validateForm(userNickName)){}
