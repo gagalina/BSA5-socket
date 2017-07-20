@@ -37,9 +37,7 @@
                 }
             });
 
-
     };
-//if(validateForm(userName) && validateForm(userNickName)){}
 
     //View message history
 
@@ -133,13 +131,16 @@
         return res;
     };
 
-
     // validate form
-    const validateForm = (field) => {
-        if (field.value === "") {
-            return false;
+    const validateForm = () => {
+        if(name.value === "" || nickName.value === ""){
+            userBtn.disabled = true;
+            console.log(userBtn.disabled);
         }
-    }
+        userBtn.disabled = false;
+    };
 
+    name.onkeydown = validateForm;
+    nickName.onkeydown = validateForm;
 
 })();
