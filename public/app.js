@@ -134,10 +134,11 @@
     // validate form
     const validateForm = () => {
         if(name.value === "" || nickName.value === ""){
-            userBtn.disabled = true;
-            console.log(userBtn.disabled);
+            userBtn.classList.add("disabled");
+        } else{
+            userBtn.classList.remove("disabled");
         }
-        userBtn.disabled = false;
+
     };
 
     name.onkeydown = validateForm;
