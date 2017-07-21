@@ -12,7 +12,6 @@
     const users = document.getElementById('users');
 
 
-
     const socket = io('http://localhost:8080');
 
     let user = {};
@@ -20,22 +19,22 @@
     //Log in
 
     userBtn.onclick = () => {
-            user = {
-                userName:name.value,
-                userNickName:nickName.value,
-                status:"just appeared",
-            };
-            socket.emit('new user', user);
-            socket.on('validation', (data) => {
-                if(data === true){
-                    name.value = '';
-                    nickName.value = '';
-                    modalWindow.style.display = "none";
-                } else{
+        user = {
+            userName: name.value,
+            userNickName: nickName.value,
+            status: "just appeared",
+        };
+        socket.emit('new user', user);
+        socket.on('validation', (data) => {
+            if (data === true) {
+                name.value = '';
+                nickName.value = '';
+                modalWindow.style.display = "none";
+            } else {
 
-                    validationField.innerText = 'Wrong input';
-                }
-            });
+                validationField.innerText = 'Wrong input';
+            }
+        });
 
     };
 
@@ -43,14 +42,14 @@
 
     socket.on('messageHistory', (data) => {
         console.log('messageHistory: ', data);
-            userIsTyping.innerText = '';
-            messageHistory.innerText = '';
-            data.map((el) => {
-                let itemMessage = document.createElement("div");
-                itemMessage.classList.add('well');
-                itemMessage.innerText = el.sender.userNickName +" - "+ el.message;
-                messageHistory.appendChild(itemMessage);
-            });
+        userIsTyping.innerText = '';
+        messageHistory.innerText = '';
+        data.map((el) => {
+            let itemMessage = document.createElement("div");
+            itemMessage.classList.add('well');
+            itemMessage.innerText = el.sender.userNickName + " - " + el.message;
+            messageHistory.appendChild(itemMessage);
+        });
     });
 
     //Send message with button
@@ -59,12 +58,14 @@
         e.preventDefault();
         let text = field.value;
         let receiver = checkForReceiver(text);
-        if(receiver !== undefined){
-            socket.emit('send to specific client', {receiver: receiver, message:text})
+        console.log(receiver);
+        if (receiver !== "") {
+            socket.emit('send to specific client', {receiver: receiver, message: text})
             field.value = '';
             return;
         }
-        socket.emit('send', {message: text, sender:user});
+
+        socket.emit('send', {message: text, sender: user});
         field.value = '';
 
     };
@@ -76,7 +77,7 @@
         data.map((el) => {
             let itemMessage = document.createElement("li");
             itemMessage.classList.add('list-group-item');
-            itemMessage.innerText = el.userName +" "+ el.userNickName +" " + el.status;
+            itemMessage.innerText = el.userName + " " + el.userNickName + " " + el.status;
             users.appendChild(itemMessage);
         });
     });
@@ -98,13 +99,13 @@
 
     field.addEventListener('keyup', (e) => {
 
-        if (e.keyCode === 13)  {
+        if (e.keyCode === 13) {
             let text = field.value;
-            socket.emit('send', {message: text, sender:user});
-            field.value =''
+            socket.emit('send', {message: text, sender: user});
+            field.value = ''
 
         }
-        else{
+        else {
             socket.emit('is typing', user);
         }
     });
@@ -124,7 +125,7 @@
         let splittedMessage = item.split(" ");
         let res = '';
         splittedMessage.map((item) => {
-            if (item.startsWith("@")){
+            if (item.startsWith("@")) {
                 res = item.substring(1, item.length);
             }
         });
@@ -133,9 +134,9 @@
 
     // validate form
     const validateForm = () => {
-        if(name.value === "" || nickName.value === ""){
+        if (name.value === "" || nickName.value === "") {
             userBtn.classList.add("disabled");
-        } else{
+        } else {
             userBtn.classList.remove("disabled");
         }
 
